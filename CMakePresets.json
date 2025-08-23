@@ -4,7 +4,8 @@
     {
       "hidden": true,
       "name": "default",
-      "binaryDir": "${sourceDir}/out",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/${presetName}",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "/usr/bin/clang",
         "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
@@ -20,7 +21,7 @@
     },
     {
       "name": "release",
-      "inherits": "default",
+      "inherits": "debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
