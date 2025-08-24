@@ -33,13 +33,15 @@ void listeners::grant_roles(dpp::cluster &bot)
 
 			dpp::json data = dpp::json::parse(notif.payload);
 
-			dpp::snowflake guildId(config::get("guild-id"));
-			dpp::snowflake userId(data.at("userId"));
+			dpp::snowflake guildId(config::get("guild-id").get<std::string>());
+			dpp::snowflake userId(data.at("userId").get<std::string>());
 
 			dpp::json roleIds = data.at("roleIds");
 
-			for (dpp::snowflake roleId : roleIds)
+			for (auto id : roleIds)
 			{
+				dpp::snowflake roleId(id.get<std::string>());
+
 				bot.guild_member_add_role(guildId, userId, roleId, [&bot, userId, roleId](dpp::confirmation_callback_t callback)
 					{
 						if (callback.is_error())
