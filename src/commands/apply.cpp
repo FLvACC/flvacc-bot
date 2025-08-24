@@ -45,12 +45,12 @@ dpp::job ApplyCommand::callback(const dpp::slashcommand_t event)
 
 		dpp::json data = dpp::json::parse(result.body);
 
-		bot.log(dpp::ll_info, fmt::format("Created ATC Basics Exam for {} with exam id {}", examineeId.str(), data.at("id").get<std::string>()));
-
 		co_await thinking;
 
 		if (result.status == 200)
 		{
+			bot.log(dpp::ll_info, fmt::format("Created ATC Basics Exam for {} with exam id {}", examineeId.str(), data.at("id").get<std::string>()));
+
 			dpp::message msg(event.command.channel_id, "Linked below is your ATC Basics Exam link.");
 
 			msg.add_component(dpp::component()
