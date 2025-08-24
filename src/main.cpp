@@ -2,7 +2,6 @@
 #include "listeners.h"
 #include <dpp/dpp.h>
 #include <dpp/json.h>
-#include <iostream>
 
 int main(int argc, char **argv)
 {

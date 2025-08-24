@@ -17,7 +17,9 @@ void listeners::on_ready(const dpp::ready_t &event)
 			ApplyCommand::register_command(bot) });
 
 		bot.start_timer([&bot](dpp::timer t)
-			{ grant_roles(bot); }, 1);
+			{ std::thread([&bot]()
+				  { grant_roles(bot); })
+				  .detach(); }, 1);
 	}
 }
 
