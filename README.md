@@ -13,3 +13,17 @@
 </h3>
 
 This open-source repository holds all the code for the main Flightline vACC Discord bot, and was written in C++ using the D++ Discord API wrapper library.
+
+## Configuration
+
+In order for this bot to function, a config.json file is required. It should look something like this:
+
+```json
+{
+  "token": "",
+  "flvacc-api-key": "",
+  "guild-id": "593830690777333770",
+  "atc-role-id": "695190404253089802",
+  "postgres-url": "postgresql://user:password@localhost:5432/flvacc"
+}
+```

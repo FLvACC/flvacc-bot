@@ -19,20 +19,27 @@ dpp::job ApplyCommand::callback(const dpp::slashcommand_t event)
 
 	if (subcommand.name == "atc")
 	{
+		dpp::guild_member member = event.command.member;
+
+		if (std::find(member.get_roles().begin(), member.get_roles().end(), dpp::snowflake(config::get("atc-role-id").get<std::string>())) != member.get_roles().end())
+		{
+			co_await event.co_reply(dpp::message("Could not create exam: You are already an Air Traffic Controller.").set_flags(dpp::message_flags::m_ephemeral));
+
+			co_return;
+		}
+
 		dpp::async thinking = event.co_thinking(true);
 		dpp::snowflake examineeId = event.command.get_issuing_user().id;
 		dpp::http_request_completion_t result;
 
 		try
 		{
-			// clang-format off
 			result = co_await bot.co_request("https://flvacc.com/api/exams/generate", dpp::m_get, "", "application/json",
 				{
 					{ "api-key", config::get("flvacc-api-key").get<std::string>() },
 					{ "examinee-id", examineeId.str() },
 					{ "type", "atc-basics" },
 				});
-			// clang-format on
 		}
 		catch (const std::exception &e)
 		{
