@@ -9,7 +9,7 @@ add_executable(${PROJECT_NAME}
     src/config.cpp
     src/listeners.cpp
     src/commands/ping.cpp
-    src/commands/apply.cpp
+    src/commands/enroll.cpp
 )
 
 find_package(DPP REQUIRED)

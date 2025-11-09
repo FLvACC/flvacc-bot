@@ -1,18 +1,18 @@
-#include "apply.h"
+#include "enroll.h"
 #include "config.h"
 #include <dpp/dpp.h>
 #include <dpp/json.h>
 #include <fmt/format.h>
 
-dpp::slashcommand ApplyCommand::register_command(dpp::cluster &bot)
+dpp::slashcommand EnrollCommand::register_command(dpp::cluster &bot)
 {
-	bot.register_command("apply", &ApplyCommand::callback);
+	bot.register_command("enroll", &EnrollCommand::callback);
 
-	return dpp::slashcommand("apply", "Enroll yourself for a publically available exam", bot.me.id)
-		.add_option(dpp::command_option(dpp::co_sub_command, "atc", "ATC Basics Exam"));
+	return dpp::slashcommand("enroll", "Enroll yourself for a publically available exam", bot.me.id)
+		.add_option(dpp::command_option(dpp::co_sub_command, "atc", "Enroll yourself for the ATC Basics Entrance Exam"));
 }
 
-dpp::job ApplyCommand::callback(const dpp::slashcommand_t event)
+dpp::job EnrollCommand::callback(const dpp::slashcommand_t event)
 {
 	dpp::cluster &bot = *event.owner;
 	auto subcommand = event.command.get_command_interaction().options[0];

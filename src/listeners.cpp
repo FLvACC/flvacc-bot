@@ -1,6 +1,6 @@
 #include "listeners.h"
-#include "apply.h"
 #include "config.h"
+#include "enroll.h"
 #include "ping.h"
 #include <dpp/dpp.h>
 #include <fmt/core.h>
@@ -14,7 +14,7 @@ void listeners::on_ready(const dpp::ready_t &event)
 	if (dpp::run_once<struct register_bot_commands>())
 	{
 		bot.global_bulk_command_create({ PingCommand::register_command(bot),
-			ApplyCommand::register_command(bot) });
+			EnrollCommand::register_command(bot) });
 
 		bot.start_timer([&bot](dpp::timer t)
 			{ std::thread([&bot]()
