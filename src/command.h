@@ -10,6 +10,9 @@ struct Command
 	static void callback(const dpp::slashcommand_t &event);
 };
 
+/**
+ * Base command struct for asynchronous commands to inherit
+ */
 struct AsyncCommand
 {
 	static dpp::slashcommand register_command(dpp::cluster &bot);

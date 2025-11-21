@@ -19,9 +19,10 @@ dpp::job EnrollCommand::callback(const dpp::slashcommand_t event)
 
 	if (subcommand.name == "atc")
 	{
-		dpp::guild_member member = event.command.member;
+		const dpp::guild_member &member = event.command.member;
+		std::string atcRoleId = config::get("atc-role-id").get<std::string>();
 
-		if (std::find(member.get_roles().begin(), member.get_roles().end(), dpp::snowflake(config::get("atc-role-id").get<std::string>())) != member.get_roles().end())
+		if (!atcRoleId.empty() && std::find(member.get_roles().begin(), member.get_roles().end(), dpp::snowflake(atcRoleId)) != member.get_roles().end())
 		{
 			co_await event.co_reply(dpp::message("Could not create exam: You are already an Air Traffic Controller.").set_flags(dpp::message_flags::m_ephemeral));
 

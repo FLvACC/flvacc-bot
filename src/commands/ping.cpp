@@ -16,7 +16,7 @@ void PingCommand::callback(const dpp::slashcommand_t &event)
 						   .set_title("Latency")
 						   .set_thumbnail(bot->me.get_avatar_url());
 
-	double restPing = bot->rest_ping * 1000;
+	int restPing = bot->rest_ping * 1000;
 
 	embed.add_field("REST API", std::to_string(restPing) + "ms");
 

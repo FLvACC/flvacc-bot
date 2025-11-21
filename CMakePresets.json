@@ -32,7 +32,8 @@
       "binaryDir": "${sourceDir}/out/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/pi.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/pi.cmake",
+        "CMAKE_CXX_FLAGS": "-O3"
       }
     }
   ]

@@ -7,6 +7,11 @@
 #include <pqxx/pqxx>
 #include <vector>
 
+namespace
+{
+std::unique_ptr<pqxx::connection> con;
+};
+
 void listeners::on_ready(const dpp::ready_t &event)
 {
 	dpp::cluster &bot = *event.owner;
@@ -16,34 +21,31 @@ void listeners::on_ready(const dpp::ready_t &event)
 		bot.global_bulk_command_create({ PingCommand::register_command(bot),
 			EnrollCommand::register_command(bot) });
 
-		bot.start_timer([&bot](dpp::timer t)
-			{ std::thread([&bot]()
-				  { grant_roles(bot); })
-				  .detach(); }, 1);
+		grant_roles(bot);
 	}
 }
 
 void listeners::grant_roles(dpp::cluster &bot)
 {
-	pqxx::connection con(config::get("postgres-url"));
+	::con = std::make_unique<pqxx::connection>(pqxx::connection(config::get("postgres-url")));
 
-	con.listen("roles", [&bot](pqxx::notification notif)
-		{ 
-			bot.log(dpp::ll_info, fmt::format("Received roles notification: {}", notif.payload.c_str()));
+	::con->listen("roles", [&bot](pqxx::notification notif)
+		{
+		bot.log(dpp::ll_info, fmt::format("Received roles notification: {}", notif.payload.c_str()));
 
-			dpp::json data = dpp::json::parse(notif.payload);
+		dpp::json data = dpp::json::parse(notif.payload);
 
-			dpp::snowflake guildId(config::get("guild-id").get<std::string>());
-			dpp::snowflake userId(data.at("userId").get<std::string>());
+		dpp::snowflake guildId(config::get("guild-id").get<std::string>());
+		dpp::snowflake userId(data.at("userId").get<std::string>());
 
-			dpp::json roleIds = data.at("roleIds");
+		dpp::json roleIds = data.at("roleIds");
 
-			for (auto id : roleIds)
-			{
-				dpp::snowflake roleId(id.get<std::string>());
+		for (auto id : roleIds)
+		{
+			dpp::snowflake roleId(id.get<std::string>());
 
-				bot.guild_member_add_role(guildId, userId, roleId, [&bot, userId, roleId](dpp::confirmation_callback_t callback)
-					{
+			bot.guild_member_add_role(guildId, userId, roleId, [&bot, userId, roleId](dpp::confirmation_callback_t callback)
+				{
 						if (callback.is_error())
 						{
 							bot.direct_message_create(userId, dpp::message("It looks like I was unable to issue you a role. Please contact an ATC instructor for further assistance."));
@@ -51,10 +53,11 @@ void listeners::grant_roles(dpp::cluster &bot)
 						}
 						else
 						{
+							bot.direct_message_create(userId, dpp::message("Welcome to the Flightline vACC! I've assigned you to the ATC Trainee role.\n\nAs a starting point, please read <#829473978078724136> to familiarize yourself with the training flow and standard procedures laid out here."));
 							bot.log(dpp::ll_info, fmt::format("Issued role {} to {}", roleId.str(), userId.str()));
-						}
-					});
-			} });
+						} });
+		} });
 
-	con.await_notification(1);
+	bot.start_timer([](dpp::timer)
+		{ ::con->get_notifs(); }, 1);
 }
