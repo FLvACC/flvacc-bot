@@ -44,19 +44,20 @@ void listeners::grant_roles(dpp::cluster &bot)
 		{
 			dpp::snowflake roleId(id.get<std::string>());
 
-			bot.guild_member_add_role(guildId, userId, roleId, [&bot, userId, roleId](dpp::confirmation_callback_t callback)
+			bot.set_audit_reason("User passed ATC Basics Entrance Exam").guild_member_add_role(guildId, userId, roleId, [&bot, userId, roleId](dpp::confirmation_callback_t callback)
 				{
 						if (callback.is_error())
 						{
-							bot.direct_message_create(userId, dpp::message("It looks like I was unable to issue you a role. Please contact an ATC instructor for further assistance."));
+							bot.direct_message_create(userId, dpp::message("It looks like I was unable to issue you a role. Please contact an ATC instructor or manager for further assistance."));
 							bot.log(dpp::ll_error, fmt::format("Unable to issue role {} to {}", roleId.str(), userId.str()));
 						}
 						else
 						{
-							bot.direct_message_create(userId, dpp::message("Welcome to the Flightline vACC! I've assigned you to the ATC Trainee role.\n\nAs a starting point, please read <#829473978078724136> to familiarize yourself with the training flow and standard procedures laid out here."));
 							bot.log(dpp::ll_info, fmt::format("Issued role {} to {}", roleId.str(), userId.str()));
 						} });
-		} });
+		}
+
+		bot.direct_message_create(userId, dpp::message("Congratulations on passing your exam, and welcome to the Flightline vACC!\n\nAs a starting point, please read <#829473978078724136> to familiarize yourself with the training flow and standard procedures laid out here.")); });
 
 	bot.start_timer([](dpp::timer)
 		{ ::con->get_notifs(); }, 1);
